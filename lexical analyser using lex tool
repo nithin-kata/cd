@@ -1,0 +1,37 @@
+program:
+
+%{
+#include<stdio.h>
+%}
+%%
+if|else|while|int|switch|for|char|float|double|break|goto|do {printf("keyword");}
+[_a-z A-Z][_a-z A-Z 0-9]+ {printf("identifier");}
+[0-9]* {printf("number");}
+.* {printf("invalid");}
+%%
+int yywrap()
+{
+ return 1;
+}
+int main()
+{
+yylex();
+return 0;
+}
+
+
+
+output:
+nnrg@nnrg-OptiPlex-Tower-7020:~$ lex program3.l
+nnrg@nnrg-OptiPlex-Tower-7020:~$ cc lex.yy.c
+nnrg@nnrg-OptiPlex-Tower-7020:~$ ./a.out
+program
+identifier
+int
+keyword
+34
+number
+9o
+invalid
+8t
+invalid
