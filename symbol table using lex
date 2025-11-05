@@ -1,0 +1,107 @@
+program:
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Symbol table node structure
+typedef struct Symbol {
+    char *name;           // pointer to dynamically allocated string
+    char type[32];        // e.g., "identifier", "keyword", "operator"
+    struct Symbol *next;
+} Symbol;
+
+Symbol *symbolTable = NULL;
+
+// Function to add a symbol to the symbol table if not already present
+void addSymbol(const char *name, const char *type) {
+    Symbol *current = symbolTable;
+    while (current != NULL) {
+        if (strcmp(current->name, name) == 0) return; // already in table
+        current = current->next;
+    }
+    // Create new symbol
+    Symbol *newSymbol = (Symbol *)malloc(sizeof(Symbol));
+    newSymbol->name = strdup(name);  // allocate and copy string
+    strcpy(newSymbol->type, type);
+    newSymbol->next = symbolTable;
+    symbolTable = newSymbol;
+}
+
+// Print the symbol table with actual addresses of names
+void printSymbolTable() {
+    printf("\nSymbol Table:\n");
+    printf("-----------------------------------------\n");
+    printf("Name\t\tType\t\tMemory Address\n");
+    printf("-----------------------------------------\n");
+    Symbol *current = symbolTable;
+    while (current != NULL) {
+        printf("%-10s\t%-10s\t%p\n", current->name, current->type, (void *)current->name);
+        current = current->next;
+    }
+    printf("-----------------------------------------\n");
+}
+
+%}
+
+%%
+"if"|"else"|"while"|"return"|"int"|"float"|"void" {
+    addSymbol(yytext, "keyword");
+    printf("Keyword: %s\n", yytext);
+}
+
+[+\-*/=<>] {
+    char op[2];
+    op[0] = yytext[0];
+    op[1] = '\0';
+    addSymbol(op, "operator");
+    printf("Operator: %s\n", yytext);
+}
+
+[a-zA-Z_][a-zA-Z0-9_]* {
+    addSymbol(yytext, "identifier");
+    printf("Identifier: %s\n", yytext);
+}
+
+[ \t\n]+ ;  // Ignore whitespace
+
+. {
+    // Ignore other characters
+}
+
+%%
+int yywrap(){}
+int main() {
+    yylex();
+    printSymbolTable();
+    return 0;
+}
+
+
+
+OUTPUT:
+nnrg@nnrg-OptiPlex-Tower-7020:~/Desktop/sonia$ lex symboltable.l
+nnrg@nnrg-OptiPlex-Tower-7020:~/Desktop/sonia$ cc lex.yy.c
+nnrg@nnrg-OptiPlex-Tower-7020:~/Desktop/sonia$ ./a.out
+A=B+C*D
+Identifier: A
+Operator: =
+Identifier: B
+Operator: +
+Identifier: C
+Operator: *
+Identifier: D
+-----------------------------------------IF YOU PRESS CNTL+D YOU WILL GET TABLE------------
+Symbol Table:
+-----------------------------------------
+Name		Type		Memory Address
+-----------------------------------------
+D         	identifier	0x635d55077dc0
+*         		operator  	0x635d55077d60
+C         		identifier	0x635d55077d00
++        	 	operator  	0x635d55077ca0
+B         		identifier	0x635d55077c40
+=         		operator  	0x635d55077be0
+A         		identifier	0x635d55077770
+-----------------------------------------
