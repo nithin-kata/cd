@@ -1,0 +1,76 @@
+8. Write a lex program to count the number of words and number of lines in a given file or program:
+ 
+Program:
+         (USING FILES)
+
+                                              exp8withfile.l
+ %{
+ #include<stdio.h>
+ int nc,nw,nl;
+ %}
+ %%
+ [a-zA-Z0-9]+ {nw++;nc+=yyleng;}
+ [ \t]+
+ {nc+=yyleng;}
+ \n
+ .
+ %%
+ {nl++;nc++;}
+ {nc++;}
+ int yywrap(){return 1;}
+ int main(int c,char**v){
+ if(c<2)return printf("Use: %s <file>\n",v[0]),0;
+ if(!(yyin=fopen(v[1],"r")))return puts("File error"),1;
+ yylex();
+ printf("Characters:%d\nWords:%d\nLines:%d\n",nc,nw,nl);
+ }
+
+                                             text.txt
+ hii
+ hello
+ howare you
+
+ Output:
+
+ (myenv) vaishnavi@VAISHNAVI:~/cd/lab$ lex exp8withfile.l
+ (myenv) vaishnavi@VAISHNAVI:~/cd/lab$ gcc lex.yy.c
+ (myenv) vaishnavi@VAISHNAVI:~/cd/lab$ ./a.out text.txt
+ Characters:22
+ Words:5
+ Lines:3
+
+
+
+ Program:
+                   (WITHOUT USING FILES)
+
+                          exp8withoutfile.l
+
+ %{
+ #include<stdio.h>
+ int l=0,w=0,in=0;
+ %}
+ %%
+ \n
+ {l++;in=0;}
+ [ \t]+ {in=0;}
+ [^\t\n ]+ {if(!in){w++;in=1;}}
+ %%
+ int main(){
+ printf("Enter text (Ctrl+D to end):\n");
+ yylex();
+ printf("Lines:%d\nWords:%d\n",l,w);
+ }
+ int yywrap(){return 1;}
+
+
+ Output:
+
+ (myenv) vaishnavi@VAISHNAVI:~/cd/lab$ lex exp8withoutfile.l
+ (myenv) vaishnavi@VAISHNAVI:~/cd/lab$ cc lex.yy.c
+ (myenv) vaishnavi@VAISHNAVI:~/cd/lab$ ./a.out
+Enter text (Ctrl+D to end):
+ hii
+ hello
+ Lines:2
+ Words:2
