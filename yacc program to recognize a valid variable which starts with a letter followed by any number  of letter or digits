@@ -1,0 +1,55 @@
+b) Program to recognize a valid variable which starts with a letter followed by any number
+ of letter or digits.
+
+Program:
+
+                                    exp4b.l
+
+ %{
+ #include "y.tab.h"
+ %}
+ %%
+ [a-zA-Z][a-zA-Z0-9]* return VARIABLE;
+ [ \t\n]+
+ ;
+ .
+ %%
+ return *yytext;
+ int yywrap() { return 1;}
+ %{
+ #include <stdio.h>
+ extern char *yytext;
+ int yylex(void);
+
+                                     exp4b.y
+
+ void yyerror(const char *s){
+ printf("Error: %s\n", s);
+ }
+ %}
+ %token VARIABLE
+ %%
+ input: VARIABLE {
+ printf("Valid variable: %s\n", yytext);
+ };
+ %%
+ int main(){
+ printf("Enter a variable: ");
+ return yyparse();
+ }
+
+
+ Output:
+
+ (myenv) vaishnavi@VAISHNAVI:~/cd/lab$ lex exp4b.l
+ (myenv) vaishnavi@VAISHNAVI:~/cd/lab$ yacc-d exp4b.y
+ (myenv) vaishnavi@VAISHNAVI:~/cd/lab$ gcc lex.yy.c y.tab.c
+ (myenv) vaishnavi@VAISHNAVI:~/cd/lab$ ./a.out
+ Enter a variable: 122var
+ Error: syntax error
+ Output-2:
+ (myenv) vaishnavi@VAISHNAVI:~/cd/lab$ ./a.out
+ Enter a variable: var122
+ Valid variable: var122
+ 12345
+ Error: syntax error
