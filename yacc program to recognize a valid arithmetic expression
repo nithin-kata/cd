@@ -2,7 +2,8 @@
  
 Program:
 
- exp4a.l
+                                       exp4a.l
+
  %{
  #include "y.tab.h"
  %}
@@ -17,7 +18,9 @@ Program:
  { }
  %%
  int yywrap() { return 1; }
- exp4a.y
+
+                                          exp4a.y
+
  %{
  #include <stdio.h>
  #include <stdlib.h>
