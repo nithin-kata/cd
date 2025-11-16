@@ -1,0 +1,35 @@
+%{
+#include <stdio.h>
+
+int vc = 0;   // vowel count
+int cc = 0;   // consonant count
+%}
+
+%%
+[aeiouAEIOU]   { vc++; }
+[a-zA-Z]       { cc++; }
+.              ;   // ignore other characters
+%%
+
+int yywrap() { return 1; }
+
+int main() {
+    printf("Enter a string: ");
+    yylex();
+    printf("No. of vowels: %d\n", vc);
+    printf("No. of consonants: %d\n", cc);
+    return 0;
+}
+
+
+
+compilation:
+lex vowels.l
+gcc lex.yy.c -o vowels
+./vowels
+
+
+output:
+Enter a string: HelloWorld
+No. of vowels: 3
+No. of consonants: 7
