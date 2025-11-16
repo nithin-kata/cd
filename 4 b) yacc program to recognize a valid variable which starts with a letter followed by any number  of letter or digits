@@ -5,21 +5,18 @@ Program:
 
                                     exp4b.l
 
- %{
- #include "y.tab.h"
- %}
- %%
- [a-zA-Z][a-zA-Z0-9]* return VARIABLE;
- [ \t\n]+
- ;
- .
- %%
- return *yytext;
- int yywrap() { return 1;}
- %{
- #include <stdio.h>
- extern char *yytext;
- int yylex(void);
+%{
+#include "y.tab.h"
+%}
+
+%%
+[a-zA-Z][a-zA-Z0-9]*    return VARIABLE;
+[ \t\n]+                ;
+.                       return *yytext;
+%%
+
+int yywrap() { return 1; }
+
 
                                      exp4b.y
 
