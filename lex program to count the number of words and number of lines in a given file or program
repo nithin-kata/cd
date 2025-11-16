@@ -4,26 +4,39 @@ Program:
          (USING FILES)
 
                                               exp8withfile.l
- %{
- #include<stdio.h>
- int nc,nw,nl;
- %}
- %%
- [a-zA-Z0-9]+ {nw++;nc+=yyleng;}
- [ \t]+
- {nc+=yyleng;}
- \n
- .
- %%
- {nl++;nc++;}
- {nc++;}
- int yywrap(){return 1;}
- int main(int c,char**v){
- if(c<2)return printf("Use: %s <file>\n",v[0]),0;
- if(!(yyin=fopen(v[1],"r")))return puts("File error"),1;
- yylex();
- printf("Characters:%d\nWords:%d\nLines:%d\n",nc,nw,nl);
- }
+%{
+#include <stdio.h>
+int nc = 0, nw = 0, nl = 0;
+%}
+
+%%
+[a-zA-Z0-9]+     { nw++; nc += yyleng; }   /* word */
+[ \t]+           { nc += yyleng; }         /* spaces */
+\n               { nl++; nc++; }           /* newline */
+.                { nc++; }                 /* any other char */
+%%
+
+int yywrap() { return 1; }
+
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        printf("Usage: %s <file>\n", argv[0]);
+        return 0;
+    }
+    if (!(yyin = fopen(argv[1], "r"))) {
+        printf("File error\n");
+        return 1;
+    }
+
+    yylex();
+
+    printf("Characters: %d\n", nc);
+    printf("Words: %d\n", nw);
+    printf("Lines: %d\n", nl);
+
+    return 0;
+}
+
 
                                              text.txt
  hii
@@ -46,22 +59,26 @@ Program:
 
                           exp8withoutfile.l
 
- %{
- #include<stdio.h>
- int l=0,w=0,in=0;
- %}
- %%
- \n
- {l++;in=0;}
- [ \t]+ {in=0;}
- [^\t\n ]+ {if(!in){w++;in=1;}}
- %%
- int main(){
- printf("Enter text (Ctrl+D to end):\n");
- yylex();
- printf("Lines:%d\nWords:%d\n",l,w);
- }
- int yywrap(){return 1;}
+%{
+#include <stdio.h>
+int l = 0, w = 0, in = 0;
+%}
+
+%%
+\n              { l++; in = 0; }
+[ \t]+          { in = 0; }
+[^\t\n ]+       { if (!in) { w++; in = 1; } }
+%%
+
+int main() {
+    printf("Enter text (Ctrl+D to end):\n");
+    yylex();
+    printf("Lines: %d\nWords: %d\n", l, w);
+    return 0;
+}
+
+int yywrap() { return 1; }
+
 
 
  Output:
