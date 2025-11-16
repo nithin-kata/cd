@@ -1,0 +1,48 @@
+%{
+#include <stdio.h>
+
+int lc = 0;  // line count
+int sc = 0;  // space count
+int ch = 0;  // character count
+int wc = 0;  // word count
+int tc = 0;  // tab count
+%}
+
+%%
+\n              { lc++; ch += yyleng; }
+\t              { tc++; ch += yyleng; }
+[ ]             { sc++; ch += yyleng; }
+[a-zA-Z0-9]+    { wc++; ch += yyleng; }
+.               { ch += yyleng; }
+%%
+
+int yywrap() { return 1; }
+
+int main() {
+    printf("Enter text:\n");
+    yylex();
+    printf("\nNo. of characters: %d\n", ch);
+    printf("No. of words: %d\n", wc);
+    printf("No. of lines: %d\n", lc);
+    printf("No. of spaces: %d\n", sc);
+    printf("No. of tabs: %d\n", tc);
+    return 0;
+}
+
+
+compilation:
+lex count.l
+gcc lex.yy.c -o count
+./count
+
+
+output:
+Enter text:
+Hello world
+This is Lex
+
+No. of characters: 21
+No. of words: 4
+No. of lines: 2
+No. of spaces: 3
+No. of tabs: 0
