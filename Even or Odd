@@ -1,0 +1,37 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+int n;
+%}
+
+%%
+[0-9]+   {
+    n = atoi(yytext);
+    if (n % 2 == 0)
+        printf("%d is Even\n", n);
+    else
+        printf("%d is Odd\n", n);
+}
+[ \t\n]+ ;   // ignore whitespace
+. ;           // ignore any other characters
+%%
+
+int yywrap() { return 1; }
+
+int main() {
+    printf("Enter a number: ");
+    yylex();
+    return 0;
+}
+
+
+compilation:
+lex even.l
+gcc lex.yy.c -o even
+./even
+
+output:
+Enter a number: 8
+8 is Even
+Enter a number: 7
+7 is Odd
