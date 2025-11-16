@@ -1,0 +1,22 @@
+%{
+#include <stdio.h>
+%}
+ID      [a-zA-Z][a-zA-Z0-9]*
+I_C     [0-9]+
+F_C     [0-9]+\.[0-9]+
+OP      (\+|\-|\*|\/|==|!=|>=|<=)
+%%
+"//".*                          { printf("Single line comment: %s\n", yytext); }
+{F_C}                           { printf("Float constant: %s\n", yytext); }
+{I_C}                           { printf("Integer constant: %s\n", yytext); }
+{OP}                            { printf("Operator: %s\n", yytext); }
+{ID}                            { printf("Identifier: %s\n", yytext); }
+.                               { printf("Unknown character: %s\n", yytext); }
+%%
+int main(int argc, char *argv[]) {
+    yylex();
+    return 0;
+}
+int yywrap(void) {
+    return 1;
+}
