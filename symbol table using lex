@@ -5,36 +5,34 @@ program:
 #include <stdlib.h>
 #include <string.h>
 
-// Symbol table node structure
 typedef struct Symbol {
-    char *name;           // pointer to dynamically allocated string
-    char type[32];        // e.g., "identifier", "keyword", "operator"
+    char *name;
+    char type[32];
     struct Symbol *next;
 } Symbol;
 
 Symbol *symbolTable = NULL;
 
-// Function to add a symbol to the symbol table if not already present
 void addSymbol(const char *name, const char *type) {
     Symbol *current = symbolTable;
     while (current != NULL) {
-        if (strcmp(current->name, name) == 0) return; // already in table
+        if (strcmp(current->name, name) == 0) return;
         current = current->next;
     }
-    // Create new symbol
+
     Symbol *newSymbol = (Symbol *)malloc(sizeof(Symbol));
-    newSymbol->name = strdup(name);  // allocate and copy string
+    newSymbol->name = strdup(name);
     strcpy(newSymbol->type, type);
     newSymbol->next = symbolTable;
     symbolTable = newSymbol;
 }
 
-// Print the symbol table with actual addresses of names
 void printSymbolTable() {
     printf("\nSymbol Table:\n");
     printf("-----------------------------------------\n");
     printf("Name\t\tType\t\tMemory Address\n");
     printf("-----------------------------------------\n");
+    
     Symbol *current = symbolTable;
     while (current != NULL) {
         printf("%-10s\t%-10s\t%p\n", current->name, current->type, (void *)current->name);
@@ -42,10 +40,10 @@ void printSymbolTable() {
     }
     printf("-----------------------------------------\n");
 }
-
 %}
 
 %%
+
 "if"|"else"|"while"|"return"|"int"|"float"|"void" {
     addSymbol(yytext, "keyword");
     printf("Keyword: %s\n", yytext);
@@ -64,19 +62,19 @@ void printSymbolTable() {
     printf("Identifier: %s\n", yytext);
 }
 
-[ \t\n]+ ;  // Ignore whitespace
-
-. {
-    // Ignore other characters
-}
+[ \t\n]+    ;
+.           ;
 
 %%
-int yywrap(){}
+
+int yywrap() {}
+
 int main() {
     yylex();
     printSymbolTable();
     return 0;
 }
+
 
 
 
