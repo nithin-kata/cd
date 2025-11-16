@@ -1,0 +1,28 @@
+%{
+#include <stdio.h>
+int len = 0;
+%}
+
+%%
+.        { len += yyleng; }   // count every character
+\n       { printf("Length of given string: %d\n", len); }
+%%
+
+int yywrap() { return 1; }
+
+int main() {
+    printf("Enter a string: ");
+    yylex();
+    return 0;
+}
+
+
+compilation:
+lex strlen.l
+gcc lex.yy.c -o strlen
+./strlen
+
+
+output:
+Enter a string: LexProgram
+Length of given string: 10
