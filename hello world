@@ -1,0 +1,24 @@
+%{
+#include <stdio.h>
+%}
+
+%%
+.    printf("Hello World\n");
+%%
+
+int yywrap() { return 1; }
+
+int main() {
+    yylex();
+    return 0;
+}
+
+
+compilation : 
+lex hello.l
+gcc lex.yy.c -o hello
+./hello
+
+output:
+Hello World
+
