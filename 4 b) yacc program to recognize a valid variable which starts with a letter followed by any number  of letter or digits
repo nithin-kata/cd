@@ -20,20 +20,28 @@ int yywrap() { return 1; }
 
                                      exp4b.y
 
- void yyerror(const char *s){
- printf("Error: %s\n", s);
- }
- %}
- %token VARIABLE
- %%
- input: VARIABLE {
- printf("Valid variable: %s\n", yytext);
- };
- %%
- int main(){
- printf("Enter a variable: ");
- return yyparse();
- }
+%{
+#include <stdio.h>
+extern char *yytext;
+int yylex();
+void yyerror(const char *s){
+    printf("Error: %s\n", s);
+}
+%}
+
+%token VARIABLE
+
+%%
+input:
+    VARIABLE  { printf("Valid variable: %s\n", yytext); }
+;
+%%
+
+int main(){
+    printf("Enter a variable: ");
+    return yyparse();
+}
+
 
 
  Output:
