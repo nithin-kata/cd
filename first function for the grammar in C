@@ -5,55 +5,74 @@
 Program:
 
 #include <stdio.h>
- #include <string.h>
- #include <ctype.h>
- #define N 30
- char g[N][50], f[256][20][20];
- int fc[256], n;
- void first(char A, char s[][20], int *c, int v[256]) {
- if (v[A]) return;
- v[A] = 1;
- for (int i = 0; i < n; i++) {
- if (g[i][0] == A) {
- char *rhs = g[i] + 3;
- if (!isupper(*rhs)) {
- char t[20]; int k = 0;
- while (rhs[k] && !isupper(rhs[k]) && rhs[k] != '|' && rhs[k] != '\0')
- t[k++] = rhs[k];
- t[k] = '\0';
- int j;
- for (j = 0; j < *c && strcmp(s[j], t); j++);
- if (j == *c) strcpy(s[(*c)++], t);
- } else {
- first(*rhs, s, c, v);
- }
- }
- }
- v[A] = 0;
- }
- int main() {
- printf("Enter no of productions: ");
- scanf("%d", &n);
- printf("Enter productions:\n");
- for (int i = 0; i < n; i++)
- scanf("%s", g[i]);
- for (int i = 0; i < n; i++) {
- int v[256] = {0};
- first(g[i][0], f[(int)g[i][0]], &fc[(int)g[i][0]], v);
- }
- printf("First sets:\n");
- char done[256] = {0};
- for (int i = 0; i < n; i++) {
- char A = g[i][0];
- if (done[(int)A]) continue;
- printf("FIRST(%c) = { ", A);
- for (int j = 0; j < fc[(int)A]; j++)
- printf("%s ", f[(int)A][j]);
- printf("}\n");
- done[(int)A] = 1;
- }
- return 0;
- }
+#include <string.h>
+#include <ctype.h>
+
+#define N 30
+
+char g[N][50], f[256][20][20];
+int fc[256], n;
+
+void first(char A, char s[][20], int *c, int v[256]) {
+    if (v[A]) return;
+    v[A] = 1;
+
+    for (int i = 0; i < n; i++) {
+        if (g[i][0] == A) {
+            char *rhs = g[i] + 3;
+
+            if (!isupper(*rhs)) {
+                char t[20];
+                int k = 0;
+
+                while (rhs[k] && !isupper(rhs[k]) && rhs[k] != '|' && rhs[k] != '\0')
+                    t[k++] = rhs[k];
+
+                t[k] = '\0';
+
+                int j;
+                for (j = 0; j < *c && strcmp(s[j], t); j++);
+
+                if (j == *c)
+                    strcpy(s[(*c)++], t);
+            } else {
+                first(*rhs, s, c, v);
+            }
+        }
+    }
+    v[A] = 0;
+}
+
+int main() {
+    printf("Enter no of productions: ");
+    scanf("%d", &n);
+
+    printf("Enter productions:\n");
+    for (int i = 0; i < n; i++)
+        scanf("%s", g[i]);
+
+    for (int i = 0; i < n; i++) {
+        int v[256] = {0};
+        first(g[i][0], f[(int)g[i][0]], &fc[(int)g[i][0]], v);
+    }
+
+    printf("First sets:\n");
+    char done[256] = {0};
+
+    for (int i = 0; i < n; i++) {
+        char A = g[i][0];
+        if (done[(int)A]) continue;
+
+        printf("FIRST(%c) = { ", A);
+        for (int j = 0; j < fc[(int)A]; j++)
+            printf("%s ", f[(int)A][j]);
+        printf("}\n");
+
+        done[(int)A] = 1;
+    }
+
+    return 0;
+}
 
 
 
